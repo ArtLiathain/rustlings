@@ -20,7 +20,6 @@
 //
 // No hints this time!
 
-// I AM NOT DONE
 
 pub enum Command {
     Uppercase,
@@ -32,11 +31,56 @@ mod my_module {
     use super::Command;
 
     // TODO: Complete the function signature!
-    pub fn transformer(input: ???) -> ??? {
+    pub fn transformer(input: Vec<(String, Command)>) -> Vec<String> {
         // TODO: Complete the output declaration!
-        let mut output: ??? = vec![];
+        fn uppercase(inp: &String) -> String {
+            inp.to_uppercase().to_string()
+        }
+
+        fn trim(inp: &String) -> String {
+            let mut start_word = 0;
+            let mut start = false;
+            let mut previous = false;
+            let mut end_word = inp.chars().count()-1;
+            for (i, c) in inp.chars().enumerate() {
+                if c != ' ' && !start {
+                    start = true;
+                    start_word = i;
+                }
+                if c == ' ' && previous && start {
+                    end_word = i - 1;
+                    return (&inp[start_word..end_word]).to_string();
+                } else if c == ' ' && !previous && start {
+                    previous = true;
+                } else {
+                    previous = false;
+                }
+            }
+            (&inp[start_word..end_word]).to_string()
+        }
+
+        fn append(strinp: &String, inp : &usize) -> String {
+            let mut temp = strinp.to_string();
+            for i in 0..*inp as i32 {
+                temp.push_str("bar");
+            }
+            temp.to_string()
+        }
+
+        let mut output: Vec<String> = vec![];
         for (string, command) in input.iter() {
             // TODO: Complete the function body. You can do it!
+            match command {
+                Command::Uppercase => {
+                    output.push(uppercase(string));
+                }
+                Command::Trim => {
+                    output.push(trim(string));
+                }
+                Command::Append(word) => {
+                    output.push(append(string, word));
+                }
+            }
         }
         output
     }
@@ -45,8 +89,8 @@ mod my_module {
 #[cfg(test)]
 mod tests {
     // TODO: What do we need to import to have `transformer` in scope?
-    use ???;
     use super::Command;
+    use crate::my_module::transformer;
 
     #[test]
     fn it_works() {
